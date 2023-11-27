@@ -6,7 +6,6 @@ from sklearn.neighbors import KNeighborsClassifier
 
 TEST_SIZE = 0.4
 
-
 def main():
 
     # Check command-line arguments
@@ -15,6 +14,7 @@ def main():
 
     # Load data from spreadsheet and split into train and test sets
     evidence, labels = load_data(sys.argv[1])
+
     X_train, X_test, y_train, y_test = train_test_split(
         evidence, labels, test_size=TEST_SIZE
     )
@@ -29,9 +29,43 @@ def main():
     print(f"Incorrect: {(y_test != predictions).sum()}")
     print(f"True Positive Rate: {100 * sensitivity:.2f}%")
     print(f"True Negative Rate: {100 * specificity:.2f}%")
+    
+import csv
 
+def load_data(filename): 
+    evidence = []
+    labels = []
+    month_to_index = {"Jan": 0, "Feb": 1, "Mar": 2, "Apr": 3, "May": 4, "June": 5,
+                      "Jul": 6, "Aug": 7, "Sep": 8, "Oct": 9, "Nov": 10, "Dec": 11}
+    visitor_type_to_index = {"Returning_Visitor": 1, "New_Visitor": 0, "Other": 0}
+    string_to_bool = {"TRUE": 1, "FALSE": 0}
+    
+    with open(filename, 'r') as file:
+        cr = csv.reader(file, delimiter=",")
+        next(cr)
+        for row in cr:
+            row[0] = int(row[0])  # Administrative
+            row[1] = float(row[1])  # Administrative_Duration
+            row[2] = int(row[2])  # Informational
+            row[3] = float(row[3])  # Informational_Duration
+            row[4] = int(row[4])  # ProductRelated
+            row[5] = float(row[5])  # ProductRelated_Duration
+            row[6] = float(row[6])  # BounceRates
+            row[7] = float(row[7])  # ExitRates
+            row[8] = float(row[8])  # PageValues
+            row[9] = float(row[9])  # SpecialDay
+            row[10] = month_to_index[row[10]]  # Month
+            row[11] = int(row[11])  # OperatingSystems
+            row[12] = int(row[12])  # Browser
+            row[13] = int(row[13])  # Region
+            row[14] = int(row[14])  # TrafficType
+            row[15] = visitor_type_to_index[row[15]]  # VisitorType
+            row[16] = string_to_bool[row[16]] # Weekend
+            evidence.append(row[:-1])
+            labels.append(string_to_bool[row[-1]])  # Revenue
 
-def load_data(filename):
+    return (evidence, labels)
+
     """
     Load shopping data from a CSV file `filename` and convert into a list of
     evidence lists and a list of labels. Return a tuple (evidence, labels).
