@@ -66,27 +66,20 @@ def load_data(filename):
 def train_model(evidence, labels):
     model = KNeighborsClassifier(n_neighbors=1)
     model.fit(evidence, labels)
-    print(model.score(evidence, labels))
 
     return model
 
 
 def evaluate(labels, predictions):
-    """
-    Given a list of actual labels and a list of predicted labels,
-    return a tuple (sensitivity, specificity).
+    true_positives = sum([1 for actual, predicted in zip(labels, predictions) if actual == 1 and predicted == 1])
+    true_negatives = sum([1 for actual, predicted in zip(labels, predictions) if actual == 0 and predicted == 0])
+    actual_positives = labels.count(1)
+    actual_negatives = labels.count(0)
 
-    Assume each label is either a 1 (positive) or 0 (negative).
+    sensitivity = true_positives / actual_positives
+    specificity = true_negatives / actual_negatives
 
-    `sensitivity` should be a floating-point value from 0 to 1
-    representing the "true positive rate": the proportion of
-    actual positive labels that were accurately identified.
-
-    `specificity` should be a floating-point value from 0 to 1
-    representing the "true negative rate": the proportion of
-    actual negative labels that were accurately identified.
-    """
-    raise NotImplementedError
+    return sensitivity, specificity
 
 
 if __name__ == "__main__":
